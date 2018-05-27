@@ -3,9 +3,9 @@ import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
 mnist = input_data.read_data_sets('/tmp/data/',one_hot=True)
 
-n_nodes_hl1 = 500
-n_nodes_hl2 = 500
-n_nodes_hl3 = 500
+n_nodes_hl1 = 784
+n_nodes_hl2 = 784
+n_nodes_hl3 = 784
 
 n_classes = 10
 batch_size = 100
@@ -20,13 +20,13 @@ def neural_network_model(data):
 	output_layer = {'weights':tf.Variable(tf.random_normal([n_nodes_hl3, n_classes])), 'biases':tf.Variable(tf.random_normal([n_classes]))}
 
 	layer_1 = tf.add(tf.matmul(data,hidden_1_layer['weights']), hidden_1_layer['biases'])
-	layer_1 = tf.nn.relu(layer_1)
+	layer_1 = tf.nn.sigmoid(layer_1)
 
 	layer_2 = tf.add(tf.matmul(layer_1,hidden_2_layer['weights']), hidden_2_layer['biases'])
-	layer_2 = tf.nn.relu(layer_2)
+	layer_2 = tf.nn.sigmoid(layer_2)
 
 	layer_3 = tf.add(tf.matmul(layer_2,hidden_3_layer['weights']), hidden_3_layer['biases'])
-	layer_3 = tf.nn.relu(layer_3)
+	layer_3 = tf.nn.sigmoid(layer_3)
 
 	output = tf.add(tf.matmul(layer_3, output_layer['weights']), output_layer['biases'])
 
@@ -37,12 +37,12 @@ def train_neural_network(x):
 	cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=prediction, labels=y))
 	optimizer = tf.train.AdamOptimizer().minimize(cost)
 
-	hm_epochs = 25
+	hm_epochs = 70
 
 	with tf.Session() as sess:
 		sess.run(tf.initialize_all_variables())
 
-		for epoch in range(0,hm_epochs):
+		for epoch in range(0,hm_epochs+1):
 			epoch_loss = 0
 			for _ in range(int(mnist.train.num_examples/batch_size)):
 				epoch_x, epoch_y = mnist.train.next_batch(batch_size)
